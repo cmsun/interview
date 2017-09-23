@@ -1,0 +1,7 @@
+a.exe
+a.out
+debug
+release
+Makefile*
+*.pro.user
+ui_*.h
