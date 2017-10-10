@@ -7,7 +7,7 @@
 *  @FileName       : udp_client.cpp
 *  @Author         : scm 351721714@qq.com
 *  @Create         : 2017/09/21 20:53:12
-*  @Last Modified  : 2017/09/23 18:16:36
+*  @Last Modified  : 2017/10/10 15:33:09
 ********************************************************************************
 */
 
@@ -65,7 +65,6 @@ udp_client::udp_client(in_addr_t addr, uint16_t port)
         printf("create receive thread error : %d !\n", errno);
         return;
     }
-    pthread_detach(m_recv_thd);
 }
 
 udp_client::udp_client(const char *addr, uint16_t port)
@@ -77,7 +76,6 @@ udp_client::udp_client(const char *addr, uint16_t port)
         printf("create receive thread error : %d !\n", errno);
         return;
     }
-    pthread_detach(m_recv_thd);
 }
 
 udp_client::~udp_client(void)
@@ -115,6 +113,8 @@ bool udp_client::initialize(in_addr_t addr, uint16_t port)
 
 void *udp_client::recv_process(void *arg)
 {
+    pthread_detach(pthread_self());
+
     udp_client &client = *((udp_client *)arg);
     std::vector<unsigned char> &buff = client.m_recv_buff;
     struct sockaddr_in addr;

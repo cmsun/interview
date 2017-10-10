@@ -7,7 +7,7 @@
 *  @FileName       : udp_server.cpp
 *  @Author         : scm 351721714@qq.com
 *  @Create         : 2017/09/21 06:18:04
-*  @Last Modified  : 2017/09/23 16:25:32
+*  @Last Modified  : 2017/10/10 15:33:43
 ********************************************************************************
 */
 
@@ -112,6 +112,8 @@ udp_server::~udp_server(void)
 
 void *udp_server::recv_process(void *arg)
 {
+    pthread_detach(pthread_self());
+
     udp_server &server = *(udp_server *)arg;
     std::vector<unsigned char> &buff = server.m_recv_buff;
     struct sockaddr_in addr;

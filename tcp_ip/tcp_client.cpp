@@ -7,7 +7,7 @@
 *  @FileName       : tcp_client.cpp
 *  @Author         : scm 351721714@qq.com
 *  @Create         : 2017/09/21 20:53:12
-*  @Last Modified  : 2017/09/22 22:35:06
+*  @Last Modified  : 2017/10/10 15:30:38
 ********************************************************************************
 */
 
@@ -76,7 +76,6 @@ tcp_client::tcp_client(void)
         printf("create receive thread error : %d !\n", errno);
         return;
     }
-    pthread_detach(m_recv_thd);
 }
 
 tcp_client::~tcp_client(void)
@@ -87,6 +86,8 @@ tcp_client::~tcp_client(void)
 
 void *tcp_client::recv_process(void *arg)
 {
+    pthread_detach(pthread_self());
+
     tcp_client &client = *((tcp_client *)arg);
     std::vector<unsigned char> &buff = client.m_recv_buff;
     struct pollfd pfd;

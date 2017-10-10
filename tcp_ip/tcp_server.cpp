@@ -7,7 +7,7 @@
 *  @FileName       : tcp_server.cpp
 *  @Author         : scm 351721714@qq.com
 *  @Create         : 2017/09/21 06:18:04
-*  @Last Modified  : 2017/09/23 16:32:25
+*  @Last Modified  : 2017/10/10 20:46:24
 ********************************************************************************
 */
 
@@ -137,7 +137,6 @@ void tcp_server::initialize(in_addr_t addr, uint16_t port)
         m_err = false;
         return;
     }
-    pthread_detach(m_accept_thd);
 
     if(pthread_create(&m_recv_thd, NULL, recv_process, this) == -1)
     {
@@ -145,7 +144,6 @@ void tcp_server::initialize(in_addr_t addr, uint16_t port)
         m_err = false;
         return;
     }
-    pthread_detach(m_recv_thd);
 }
 
 tcp_server::~tcp_server(void)
@@ -158,12 +156,14 @@ tcp_server::~tcp_server(void)
         close(*itr);
     }
     close(m_epoll_fd);
-    pthread_exit(&m_accept_thd);
-    pthread_exit(&m_recv_thd);
+    pthread_cancel(&m_accept_thd);
+    pthread_cancel(&m_recv_thd);
 }
 
 void *tcp_server::accept_process(void *arg)
 {
+    pthread_detach(pthread_self());
+
     int client_sockfd;
     struct sockaddr_in client_addr;
     socklen_t addr_len = sizeof(struct sockaddr_in);
@@ -184,6 +184,8 @@ void *tcp_server::accept_process(void *arg)
 
 void *tcp_server::recv_process(void *arg)
 {
+    pthread_detach(pthread_self());
+
     tcp_server &server = *(tcp_server *)arg;
     std::list<int> &client_sockfd = server.m_client_sockfd;
     std::vector<unsigned char> &buff = server.m_recv_buff;
